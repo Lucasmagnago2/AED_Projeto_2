@@ -108,9 +108,13 @@ namespace SmartManager
                 //Senha inicial
                 string senhaInicial = "12345";
 
-                //Criando funcionário default(administrador)
-                Gerente admin = new Gerente("Admin", 20, 12345678999L, senhaInicial, Departamento.Administração);
-                funcionarios.Add(admin);
+                //Criando gerente default e o adicionando a lista de funcionarios
+                Gerente gerenteDefault = new Gerente("GerenteDefault", 20, 12345678999L, senhaInicial, Departamento.Administração);
+                funcionarios.Add(gerenteDefault);
+
+                //Criando vendedor default e o adicionando a lista de funcionarios
+                Vendedor vendedorDefault = new Vendedor("VendedorDefault", 20, 98765432111L, senhaInicial, Departamento.Vendas);
+                funcionarios.Add(vendedorDefault);
 
                 //Criando o setor de administração
                 Administracao administracao = new Administracao();
@@ -123,7 +127,7 @@ namespace SmartManager
                 //Iniciando o sistema
                 Console.WriteLine("------SmartManager------");
 
-                //Apresentando tela de login
+                //Chamando a função login
                 Funcionario funcionarioAtivo = Login(funcionarios);
 
                 Console.WriteLine();
@@ -403,16 +407,75 @@ namespace SmartManager
                         Console.WriteLine("0. Sair");
                         Console.WriteLine();
                         Console.Write("> ");
+
+                        foreach(Venda v in administracao.Vendas)
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine(v);
+                            Console.WriteLine();
+                        }
+
                         opcao = int.Parse(Console.ReadLine());
                         Console.WriteLine();
 
                         switch (opcao)
                         {
                             case 1:
+                                Console.WriteLine();
+                                Console.WriteLine("---Realizar venda---");
+                                Console.WriteLine();
+                                Console.WriteLine("Para encerrar a venda digite 0");
+                                int id = -1;
+                                double total = 0;
 
+                                while(id != 0)
+                                {
+                                    Console.WriteLine();
+                                    Console.Write("Id do produto: ");
+                                    id = int.Parse(Console.ReadLine());
+
+                                    //Verificando se o id inserido corresponde a algum produto da lista
+                                    Produto p = administracao.Estoque.Find(x => x.Id == id);
+
+                                    if(p != null)
+                                    {
+                                        Console.Write("Quantidade: ");
+                                        int qtd = int.Parse(Console.ReadLine());
+
+                                        if(qtd < 0)
+                                        {
+                                            Console.WriteLine();
+                                            Console.WriteLine("A quantidade de produtos não pode ser negativa");
+                                            Console.WriteLine();
+                                        }
+                                        else
+                                        {
+                                            p.AlterarQuantidade(qtd*-1);
+
+                                            total = Venda.CalcularTotal(p, qtd, total);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine();
+                                        Console.WriteLine("Produto não encontrado");
+                                        Console.WriteLine();
+                                    }
+                                }
+
+                                DateTime dataVenda = DateTime.Now;
+                                Vendedor vendedorVenda = vendedorAtivo;
+
+                                Venda vendaAtual = new Venda(vendedorVenda, dataVenda, total);
+                                administracao.Vendas.Add(vendaAtual);
+
+                                Console.WriteLine("Informações da venda: ");
+                                Console.WriteLine(vendaAtual);
+                                Console.WriteLine();
+                                Console.WriteLine("---Fim da venda---");
                                 break;
 
-                            case 2:
+                            case 0:
                                 //0. Sair
 
                                 //Encerrar loop do sistema
