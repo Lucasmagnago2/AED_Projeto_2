@@ -1,4 +1,6 @@
-﻿namespace SmartManager.Entidades
+﻿using SmartManager.Entidades.enums;
+
+namespace SmartManager.Entidades
 {
     internal class Funcionario
     {
@@ -8,29 +10,45 @@
         public long Id { get; private set; }
 
         public string Senha { get; private set; }
+        public Departamento Departamento { get; set; }
 
         public Funcionario()
         {
 
         }
-        public Funcionario(string nome, int idade, long cpf,  string senha)
+        public Funcionario(string nome, int idade, long cpf,  string senha, Departamento departamento)
         {
             Nome = nome;
             Idade = idade;
-            Cpf = cpf;
-            Login();
+            VerificarCPF(cpf);
             AlteraSenha(senha);
+            Departamento = departamento;
         }
-        public void Login()
+        //Método que verifica se o CPF é valido
+        public void VerificarCPF(long cpf)
         {
-            Id = Cpf;
+            if(cpf.ToString().Length < 11 || cpf.ToString().Length > 11)
+            {
+                throw new ExcecaoDoSistema("O CPF fornecido não é válido");
+            }
+            else
+            {
+                Cpf = cpf;
+            }
         }
+        //Verificando se a senha tem o tamanho mínimo
         public void AlteraSenha(string senha)
         {
-            if(senha.Length > 5)
+            if(senha.Length < 5)
+            {
+                throw new ExcecaoDoSistema("A senha deve conter pelo menos 5 caracteres");
+            }
+            else
             {
                 Senha = senha;
             }
         }
+
+        
     }
 }

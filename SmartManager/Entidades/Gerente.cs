@@ -1,15 +1,12 @@
 ﻿using System;
 using SmartManager.Entidades.enums;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SmartManager.Entidades
 {
     internal class Gerente : Funcionario
     {
-        public Departamento Departamento { get; set; }
 
-        public Gerente(string nome, int idade, long cpf, string senha, Departamento departamento) : base(nome, idade, cpf, senha)
+        public Gerente(string nome, int idade, long cpf, string senha, Departamento departamento) : base(nome, idade, cpf, senha, departamento)
         {
             Departamento = departamento;
         }
@@ -17,6 +14,11 @@ namespace SmartManager.Entidades
        public void CadastrarFuncionario()
         {
 
+        }
+
+        public override string ToString()
+        {
+            return $"Informações do Gerente\nNome: {Nome}\nIdade: {Idade}\nCpf:{Cpf}\nDepartamento: {Departamento}";
         }
     }
 }
