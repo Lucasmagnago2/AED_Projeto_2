@@ -18,7 +18,7 @@ namespace SmartManager.Entidades
 
         public override string ToString()
         {
-            return $"Informações do Vendedor\nNome: {Nome}\nIdade: {Idade}\nCpf:{Cpf}\nDepartamento: {Departamento}";
+            return $"Nome: {Nome}\nIdade: {Idade}\nCpf:{Cpf}\nDepartamento: {Departamento}";
         }
     }
 }

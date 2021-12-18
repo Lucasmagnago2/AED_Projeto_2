@@ -1,4 +1,5 @@
-﻿using SmartManager.Entidades.enums;
+﻿using System;
+using SmartManager.Entidades.enums;
 
 namespace SmartManager.Entidades
 {
@@ -48,7 +49,11 @@ namespace SmartManager.Entidades
                 Senha = senha;
             }
         }
+        public override string ToString()
+        {
+            return $"Nome: {Nome}\nIdade: {Idade}\nCpf:{Cpf}\nDepartamento: {Departamento}";
+        }
 
-        
+
     }
 }

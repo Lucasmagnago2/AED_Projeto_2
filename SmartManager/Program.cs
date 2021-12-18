@@ -15,13 +15,13 @@ namespace SmartManager
     }
     internal class Program
     {
-        public static Departamento Login(List<Funcionario> lista)
+        public static Funcionario Login(List<Funcionario> lista)
         {
             //Estado do login
             string situacaoLogin = EstadoLogin.Deslogado.ToString();
 
-            //Departamento do funcionário
-            Departamento departamento = new Departamento();
+            //Funcionario Ativo
+            Funcionario funcionarioAtivo = new Funcionario(); 
 
             //Solicitando e verificando login e senha do funcionario, o loop continuará enquanto não for
             //inserido um login e senha corretos
@@ -43,8 +43,9 @@ namespace SmartManager
                         Console.WriteLine();
                         Console.WriteLine("Login realizado com sucesso!");
 
-                        //Armazenando o departamento do usuário
-                        departamento = funcionario.Departamento;
+                        //Armazenando o funcionário que efetuou o login
+                        funcionarioAtivo = funcionario;
+
                         //Mudando o estatus de login para sair do loop da funçáo
                         situacaoLogin = EstadoLogin.Logado.ToString();
 
@@ -62,8 +63,8 @@ namespace SmartManager
 
             }
 
-            //Retornando o departamento do funcionario que efetuou o login
-            return departamento;
+            //Retornando o funcionario que efetuou o login
+            return funcionarioAtivo;
         }
 
         //Menu Administração
@@ -74,9 +75,11 @@ namespace SmartManager
             Console.WriteLine("2. Editar produto");
             Console.WriteLine("3. Relatório do estoque");
             Console.WriteLine("4. Relatório de vendas");
-            Console.WriteLine("5. Cadastrar funcionário");
-            Console.WriteLine("6. Redefinir senha");
-            Console.WriteLine("7. Sair");
+            Console.WriteLine("5. Relatório de funcionários");
+            Console.WriteLine("6. Cadastrar funcionário");
+            Console.WriteLine("7. Remover funcionário");
+            Console.WriteLine("8. Redefinir senha");
+            Console.WriteLine("0. Sair");
             Console.WriteLine();
 
             Console.Write("Selecione um opção: ");
@@ -84,7 +87,7 @@ namespace SmartManager
             int opcao = int.Parse(Console.ReadLine());
 
             //Verificar se a opção escolhida é válida
-            if (opcao < 1 || opcao > 7)
+            if (opcao < 0 || opcao > 8)
             {
                 //Lançar erro caso opção escolhida seja inválida
                 throw new ExcecaoDoSistema("A opção escolhida não é válida");
@@ -121,17 +124,21 @@ namespace SmartManager
                 Console.WriteLine("------SmartManager------");
 
                 //Apresentando tela de login
-                Departamento departamentoFuncionario = Login(funcionarios);
+                Funcionario funcionarioAtivo = Login(funcionarios);
 
                 Console.WriteLine();
 
                 //Apresentando o sistema de administração
-                if (departamentoFuncionario == Departamento.Administração)
+                if (funcionarioAtivo.Departamento == Departamento.Administração)
                 {
+
+                    //Realizando o downcasting do funcionario ativo (que nesse caso é um gerente)
+                    //para utilizar os métodos da classe Gerente
+                    Gerente gerenteAtivo = (Gerente)funcionarioAtivo;
 
                     int opcao = -1;
 
-                    while (opcao != 7)
+                    while (opcao != 0)
                     {
                         Console.WriteLine();
                         Console.WriteLine("---Administração---");
@@ -174,15 +181,11 @@ namespace SmartManager
                                     double margemLucro = double.Parse(Console.ReadLine());
 
                                     //Criando o produto e adicionando ele na lista de produtos
-                                    administracao.Estoque.Add(new Produto(id, nome, valorCusto, margemLucro, quantidade));
-
-                                    Console.WriteLine();
-                                    Console.WriteLine("Produto adicionado com sucesso");
-                                    Console.WriteLine();
+                                    gerenteAtivo.CadastrarProduto(administracao.Estoque, id, nome, valorCusto, margemLucro, quantidade);
+                     
                                 }
 
                                 Console.WriteLine("Cadastro de produtos finalizado");
-                                Console.WriteLine();
                                 break;
 
                             case 2:
@@ -249,7 +252,10 @@ namespace SmartManager
                                         Console.WriteLine("Margem de lucro alterada com sucesso");
                                         Console.WriteLine();
                                         break;
-                                }                    
+                                }
+
+                                Console.WriteLine();
+                                Console.WriteLine("---Fim de edição de produto---");
                                 break;
 
                             case 3:
@@ -279,7 +285,29 @@ namespace SmartManager
                                 break;
 
                             case 5:
-                                //5. Cadastrar funcionário
+                                //5. Relatório de funcionários
+                                Console.WriteLine();
+                                Console.WriteLine("---Relatório do Funcionários---");
+                                Console.WriteLine();
+
+                                int iii = 0;
+
+                                foreach (Funcionario f in funcionarios)
+                                {
+                                    Console.WriteLine($"Funcionário {iii + 1}");
+                                    Console.WriteLine(f);
+                                    Console.WriteLine();
+
+                                    iii++;
+                                }
+                                
+                                Console.WriteLine();
+                                Console.WriteLine("---Fim do relatório---");
+                                break;
+
+
+                            case 6:
+                                //6. Cadastrar funcionário
                                 Console.WriteLine();
                                 Console.WriteLine("---Cadastro de funcionários---");
                                 Console.WriteLine();
@@ -304,33 +332,53 @@ namespace SmartManager
                                     Console.Write("Departamento (1. Administração/2. Vendas): ");
                                     Departamento departamentoCadastro = Enum.Parse<Departamento>(Console.ReadLine());
 
-                                    funcionarios.Add(new Funcionario(nomeCadastro, idadeCadastro, cpfCadastro, senhaInicial, departamentoCadastro));
+                                    //Chamando o método da classe Gerente para realizar o cadastro e adicionar o funcionário na lista
+                                    gerenteAtivo.CadastrarFuncionario(funcionarios, nomeCadastro, idadeCadastro, cpfCadastro, senhaInicial, departamentoCadastro);
 
-                                    Console.WriteLine();
-                                    Console.WriteLine("Funcionário cadastrado com sucesso!");
                                 }
-                                break;
 
                                 Console.WriteLine();
                                 Console.WriteLine("---Fim do cadastro de funcionários---");
+                                break;
 
-                            case 6:
-                                //6. Alterar senha
+
+
+                            case 7:
+                                //7. Remover funcionário
+                                Console.WriteLine();
+                                Console.WriteLine("---Remover funcionário---");
+
+                                Console.Write("Digite o CPF do funcionario a ser removido: ");
+                                long cpfRemover = long.Parse(Console.ReadLine());
+
+                                gerenteAtivo.RemoverFuncionario(funcionarios, cpfRemover);
+
+                                Console.WriteLine("---Fim da remoção de funcionário---");
+                                break;
+
+                            case 8:
+                                //8. Alterar senha
                                 Console.WriteLine();
                                 Console.WriteLine("---Alterar senha---");
                                 Console.WriteLine();
 
                                 Console.Write("Digite uma nova senha (a senha tem que ter ao menos 5 digitos): ");
+                                string novaSenha = Console.ReadLine();
 
                                 //Alterando a senha do funcionário
+                                funcionarioAtivo.AlteraSenha(novaSenha);
 
+                                Console.WriteLine();
+                                Console.WriteLine("Senha alterada com sucesso");
+                                Console.WriteLine();
+                                Console.WriteLine("---Fim de alterar senha---");
                                 break;
 
-                            case 7:
-                                //7. Sair
+                            case 0:
+                                //0. Sair
 
                                 //Encerrando o loop do sistema da Administração
-                                opcao = 7;
+                                opcao = 0;
 
                                 break;
                         }
@@ -340,7 +388,43 @@ namespace SmartManager
                 //Apresentando o sistema de vendas
                 else
                 {
+                    //Realizando o downcasting do funcionario ativo (que nesse caso é um vendedor)
+                    //para utilizar os métodos da classe Vendedor
+                    Vendedor vendedorAtivo = (Vendedor)funcionarioAtivo;
 
+                    int opcao = -1;
+
+                    while(opcao != 0)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("---Vendas---");
+                        Console.WriteLine();
+                        Console.WriteLine("1. Realizar venda");
+                        Console.WriteLine("0. Sair");
+                        Console.WriteLine();
+                        Console.Write("> ");
+                        opcao = int.Parse(Console.ReadLine());
+                        Console.WriteLine();
+
+                        switch (opcao)
+                        {
+                            case 1:
+
+                                break;
+
+                            case 2:
+                                //0. Sair
+
+                                //Encerrar loop do sistema
+                                opcao = 0;
+                                break;
+
+                            default:
+                                Console.WriteLine("Opção inválida");
+                                break;
+                                
+                        }
+                    }
                 }
 
                 Console.WriteLine();
