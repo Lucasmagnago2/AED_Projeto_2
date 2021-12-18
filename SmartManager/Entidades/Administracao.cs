@@ -4,12 +4,12 @@ using System.Text;
 
 namespace SmartManager.Entidades
 {
-    internal class Gerencia
+    internal class Administracao
     {
-        public List<Produto> Estoque { get; set; }
-        public List<Venda> Vendas { get; set; }
+        public List<Produto> Estoque { get; set; } = new List<Produto>();
+        public List<Venda> Vendas { get; set; } = new List<Venda>();
 
-        public Gerencia()
+        public Administracao()
         {
  
         }
