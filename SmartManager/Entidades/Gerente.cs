@@ -24,7 +24,7 @@ namespace SmartManager.Entidades
                     temCadastro = true;
 
                     Console.WriteLine();
-                    Console.WriteLine("O cpf informado já possui cadastro no sistema");
+                    Console.WriteLine("O cpf informado já possui cadastro no sistema.");
                     Console.WriteLine();
                 }
             }
@@ -32,21 +32,23 @@ namespace SmartManager.Entidades
             //Realizando o cadastro
             if (!temCadastro)
             {
+
                 //Cadastro de gerente
                 if (departamento == Departamento.Administração)
                 {
                     lista.Add(new Gerente(nome, idade, cpf, senha, departamento));
 
                     Console.WriteLine();
-                    Console.WriteLine("Funcionário cadastrado com sucesso");
+                    Console.WriteLine($"O funcionário {nome} foi cadastrado com sucesso!");
                 }
+
                 //Cadastro de funcionário
                 else
                 {
                     lista.Add(new Vendedor(nome, idade, cpf, senha, departamento));
 
                     Console.WriteLine();
-                    Console.WriteLine("Funcionário cadastrado com sucesso");
+                    Console.WriteLine($"O funcionário {nome} foi cadastrado com sucesso!");
                 }
             }
             
@@ -62,7 +64,7 @@ namespace SmartManager.Entidades
                     lista.Remove(f);
 
                     Console.WriteLine();
-                    Console.WriteLine("Funcionário removido com sucesso");
+                    Console.WriteLine($"O funcionário {f.Nome} foi removido com sucesso!");
                     Console.WriteLine();
 
                     return;
@@ -71,7 +73,7 @@ namespace SmartManager.Entidades
 
             //Caso funcionario não seja encontrado na lista
             Console.WriteLine();
-            Console.WriteLine("Funcionário não encontrado");
+            Console.WriteLine("Funcionário não encontrado.");
             Console.WriteLine();
 
             return;
@@ -88,8 +90,7 @@ namespace SmartManager.Entidades
                     jaCadastrado = true;
 
                     Console.WriteLine();
-                    Console.WriteLine("Produto já cadastrado");
-                    Console.WriteLine();
+                    Console.WriteLine("Produto já cadastrado.");
 
                     return;
                 }
@@ -101,8 +102,7 @@ namespace SmartManager.Entidades
                 listaDeProdutos.Add(new Produto(id, nome, valorCusto, margemLucro, qtd));
 
                 Console.WriteLine();
-                Console.WriteLine("Produto cadastrado com sucesso");
-                Console.WriteLine();
+                Console.WriteLine("Produto cadastrado com sucesso!");
             }
         } 
         public override string ToString()

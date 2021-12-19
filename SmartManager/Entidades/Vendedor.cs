@@ -11,9 +11,9 @@ namespace SmartManager.Entidades
             
         }
 
-        public void Vender()
+        public void Vender(Produto p, int qtd)
         {
-
+            p.AlterarQuantidade(qtd * -1);
         }
 
         public override string ToString()
