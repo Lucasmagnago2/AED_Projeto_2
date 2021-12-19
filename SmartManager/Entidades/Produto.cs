@@ -81,7 +81,7 @@ namespace SmartManager.Entidades
         }
         public double ValorTotalEmEstoque()
         {
-            return Quantidade * ValorVenda;
+            return Quantidade * ValorCusto;
         }
 
         public static void AtualizarBaseDeProdutos(List<Produto> lista)
