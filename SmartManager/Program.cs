@@ -27,8 +27,12 @@ namespace SmartManager
             //inserido um login e senha corretos
             while (situacaoLogin != EstadoLogin.Logado.ToString())
             {
+                Console.Clear();
+
                 //Solicitando login e senha
+                Console.WriteLine("------SmartManager------");
                 Console.WriteLine();
+
                 Console.Write("Login (cpf): ");
                 long login = long.Parse(Console.ReadLine());
                 Console.Write("Senha: ");
@@ -59,6 +63,8 @@ namespace SmartManager
                     Console.WriteLine();
                     Console.WriteLine("Senha ou usuário inválidos, tente novamente.");
                     Console.WriteLine();
+                    Console.WriteLine("Pressione qualquer tecla para continuar...");
+                    Console.ReadLine();
                 }
 
             }
@@ -90,7 +96,7 @@ namespace SmartManager
             if (opcao < 0 || opcao > 8)
             {
                 //Lançar erro caso opção escolhida seja inválida
-                throw new ExcecaoDoSistema("A opção escolhida não é válida");
+                throw new ExcecaoDoSistema("A opção escolhida não é válida.");
             }
             else
             {
@@ -108,25 +114,15 @@ namespace SmartManager
                 //Senha inicial
                 string senhaInicial = "12345";
 
-                //Criando gerente default e o adicionando a lista de funcionarios
-                Gerente gerenteDefault = new Gerente("GerenteDefault", 20, 12345678999L, senhaInicial, Departamento.Administração);
-                funcionarios.Add(gerenteDefault);
-
-                //Criando vendedor default e o adicionando a lista de funcionarios
-                Vendedor vendedorDefault = new Vendedor("VendedorDefault", 20, 98765432111L, senhaInicial, Departamento.Vendas);
-                funcionarios.Add(vendedorDefault);
-
                 //Criando o setor de administração
                 Administracao administracao = new Administracao();
 
-                //Adicionando produtos iniciais no estoque
-                administracao.Estoque.Add(new Produto(001, "Café", 2.74, 50, 120));
-                administracao.Estoque.Add(new Produto(002, "Leite", 3.26, 60, 240));
-                administracao.Estoque.Add(new Produto(003, "Arroz", 8.18, 40, 460));
+                //Atualizando as listas de Funcionários, Produtos e vendas com os dados das base de dados
+                Funcionario.AtualizarListaDeFuncionarios(funcionarios);
+                Produto.AtualizarListaDeProdutos(administracao.Estoque);
+                Venda.AtualizarListaDeVendas(administracao.Vendas);
 
                 //Iniciando o sistema
-                Console.WriteLine("------SmartManager------");
-
                 //Chamando a função login
                 Funcionario funcionarioAtivo = Login(funcionarios);
 
@@ -144,7 +140,7 @@ namespace SmartManager
 
                     while (opcao != 0)
                     {
-                        Console.WriteLine();
+                        Console.Clear();
                         Console.WriteLine("---Administração---");
 
                         //Chamar menu de administração e pegar opção escolhida do usuário
@@ -154,19 +150,18 @@ namespace SmartManager
                         {
                             case 1:
                                 //1. Cadastrar produto
-                                Console.WriteLine();
+                                Console.Clear();
                                 Console.WriteLine("---Cadastrar produto---");
                                 Console.WriteLine();
 
                                 Console.Write("Quantos produtos você quer cadastrar? ");
                                 int qtd = int.Parse(Console.ReadLine());
-                                Console.WriteLine();
 
                                 for (int i = 0; i < qtd; i++)
                                 {
                                     //Solicitando os dados desse novo produto
                                     Console.WriteLine();
-                                    Console.WriteLine($"Produto {i + 1}");
+                                    Console.WriteLine($"Cadastro nº {i + 1}");
                                     Console.WriteLine();
 
                                     Console.Write("Id: ");
@@ -186,15 +181,17 @@ namespace SmartManager
 
                                     //Criando o produto e adicionando ele na lista de produtos
                                     gerenteAtivo.CadastrarProduto(administracao.Estoque, id, nome, valorCusto, margemLucro, quantidade);
-                     
                                 }
-
-                                Console.WriteLine("Cadastro de produtos finalizado");
+                                Console.WriteLine();
+                                Console.WriteLine("Cadastro de produtos finalizado!");
+                                Console.WriteLine();
+                                Console.WriteLine("Pressione qualquer tecla para continuar...");
+                                Console.ReadLine();
                                 break;
 
                             case 2:
                                 //2. Editar produto
-                                Console.WriteLine();
+                                Console.Clear();
                                 Console.WriteLine("---Editar produto---");
                                 Console.WriteLine();
 
@@ -238,18 +235,21 @@ namespace SmartManager
                                         Console.Write("Digite o valor de custo: ");
                                         double valorCustoProduto = double.Parse(Console.ReadLine());
 
+                                        //Alterando valor de custo
                                         produtoEditar.AlterarValorCusto(valorCustoProduto);
 
                                         Console.WriteLine();
                                         Console.WriteLine("Valor de custo alterado com sucesso");
                                         Console.WriteLine();
                                         break;
+
                                     case 3:
                                         //3. Margem de lucro
                                         Console.WriteLine();
-                                        Console.Write("Digite o valor de custo: ");
+                                        Console.Write("Digite a margem de lucro (%): ");
                                         double margemLucroProduto = double.Parse(Console.ReadLine());
 
+                                        //Alterando margem de lucro
                                         produtoEditar.AlterarMargemLucro(margemLucroProduto);
 
                                         Console.WriteLine();
@@ -258,39 +258,43 @@ namespace SmartManager
                                         break;
                                 }
 
-                                Console.WriteLine();
                                 Console.WriteLine("---Fim de edição de produto---");
+                                Console.WriteLine();
+                                Console.WriteLine("Pressione qualquer tecla para continuar...");
+                                Console.ReadLine();
                                 break;
 
                             case 3:
                                 //3. Relatório do estoque
-                                Console.WriteLine();
+                                Console.Clear();
                                 Console.WriteLine("---Relatório do Estoque---");
-                                Console.WriteLine();
 
-                                int ii = 0;
-
-                                foreach(Produto p in administracao.Estoque)
-                                {
-                                    Console.WriteLine($"Produto {ii + 1}");
-                                    Console.WriteLine(p);
-                                    Console.WriteLine();
-
-                                    ii++;
-                                }
+                                administracao.RelatorioEstoque();
 
                                 Console.WriteLine();
                                 Console.WriteLine("---Fim do relatório---");
+                                Console.WriteLine();
+                                Console.WriteLine("Pressione qualquer tecla para continuar...");
+                                Console.ReadLine();
                                 break;
 
                             case 4:
                                 //4. Relatório de vendas
+                                Console.Clear();
+                                Console.WriteLine("---Relatório de vendas---");
 
+                                administracao.RelatorioVendas();
+
+                                Console.WriteLine();
+                                Console.WriteLine("---Fim de vendas---");
+                                Console.WriteLine();
+                                Console.WriteLine("Pressione qualquer tecla para continuar...");
+                                Console.ReadLine();
                                 break;
 
                             case 5:
                                 //5. Relatório de funcionários
-                                Console.WriteLine();
+                                Console.Clear();
                                 Console.WriteLine("---Relatório do Funcionários---");
                                 Console.WriteLine();
 
@@ -307,12 +311,15 @@ namespace SmartManager
                                 
                                 Console.WriteLine();
                                 Console.WriteLine("---Fim do relatório---");
+                                Console.WriteLine();
+                                Console.WriteLine("Pressione qualquer tecla para continuar...");
+                                Console.ReadLine();
                                 break;
 
 
                             case 6:
                                 //6. Cadastrar funcionário
-                                Console.WriteLine();
+                                Console.Clear();
                                 Console.WriteLine("---Cadastro de funcionários---");
                                 Console.WriteLine();
 
@@ -343,13 +350,16 @@ namespace SmartManager
 
                                 Console.WriteLine();
                                 Console.WriteLine("---Fim do cadastro de funcionários---");
+                                Console.WriteLine();
+                                Console.WriteLine("Pressione qualquer tecla para continuar...");
+                                Console.ReadLine();
                                 break;
 
 
 
                             case 7:
                                 //7. Remover funcionário
-                                Console.WriteLine();
+                                Console.Clear();
                                 Console.WriteLine("---Remover funcionário---");
 
                                 Console.Write("Digite o CPF do funcionario a ser removido: ");
@@ -358,11 +368,14 @@ namespace SmartManager
                                 gerenteAtivo.RemoverFuncionario(funcionarios, cpfRemover);
 
                                 Console.WriteLine("---Fim da remoção de funcionário---");
+                                Console.WriteLine();
+                                Console.WriteLine("Pressione qualquer tecla para continuar...");
+                                Console.ReadLine();
                                 break;
 
                             case 8:
                                 //8. Alterar senha
-                                Console.WriteLine();
+                                Console.Clear();
                                 Console.WriteLine("---Alterar senha---");
                                 Console.WriteLine();
 
@@ -380,6 +393,16 @@ namespace SmartManager
 
                             case 0:
                                 //0. Sair
+                                Console.Clear();
+
+                                //Atualizar base de dados de funcionários
+                                Funcionario.AtualizarBaseDeFuncionarios(funcionarios);
+
+                                //Atualizar base de dados de produtos
+                                Produto.AtualizarBaseDeProdutos(administracao.Estoque);
+
+                                //Atualizar base de dados de vendas
+                                Venda.AtualizarBaseDeVendas(administracao.Vendas);
 
                                 //Encerrando o loop do sistema da Administração
                                 opcao = 0;
@@ -400,7 +423,7 @@ namespace SmartManager
 
                     while(opcao != 0)
                     {
-                        Console.WriteLine();
+                        Console.Clear();
                         Console.WriteLine("---Vendas---");
                         Console.WriteLine();
                         Console.WriteLine("1. Realizar venda");
@@ -416,12 +439,11 @@ namespace SmartManager
                         }
 
                         opcao = int.Parse(Console.ReadLine());
-                        Console.WriteLine();
 
                         switch (opcao)
                         {
                             case 1:
-                                Console.WriteLine();
+                                Console.Clear();
                                 Console.WriteLine("---Realizar venda---");
                                 Console.WriteLine();
                                 Console.WriteLine("Para encerrar a venda digite 0");
@@ -450,7 +472,7 @@ namespace SmartManager
                                         }
                                         else
                                         {
-                                            p.AlterarQuantidade(qtd*-1);
+                                            vendedorAtivo.Vender(p, qtd);
 
                                             total = Venda.CalcularTotal(p, qtd, total);
                                         }
@@ -464,19 +486,35 @@ namespace SmartManager
                                 }
 
                                 DateTime dataVenda = DateTime.Now;
-                                Vendedor vendedorVenda = vendedorAtivo;
+                                string vendedorVenda = vendedorAtivo.Nome;
 
                                 Venda vendaAtual = new Venda(vendedorVenda, dataVenda, total);
                                 administracao.Vendas.Add(vendaAtual);
 
+                                Console.Clear();
+                                Console.WriteLine("---Venda Realizada---");
+                                Console.WriteLine();
                                 Console.WriteLine("Informações da venda: ");
+                                Console.WriteLine();
                                 Console.WriteLine(vendaAtual);
                                 Console.WriteLine();
                                 Console.WriteLine("---Fim da venda---");
+                                Console.WriteLine();
+                                Console.WriteLine("Pressione qualquer tecla para continuar...");
+                                Console.ReadLine();
                                 break;
 
                             case 0:
                                 //0. Sair
+
+                                //Atualizar base de dados de funcionários
+                                Funcionario.AtualizarBaseDeFuncionarios(funcionarios);
+
+                                //Atualizar base de dados de produtos
+                                Produto.AtualizarBaseDeProdutos(administracao.Estoque);
+
+                                //Atualizar base de dados de vendas
+                                Venda.AtualizarBaseDeVendas(administracao.Vendas);
 
                                 //Encerrar loop do sistema
                                 opcao = 0;
@@ -490,17 +528,18 @@ namespace SmartManager
                     }
                 }
 
-                Console.WriteLine();
+                Console.Clear();
                 Console.WriteLine("---Sistema encerrado---");
-                Console.WriteLine();
             }
             //Capturando a exceção e mostrando na tela
             catch (ExcecaoDoSistema e)
             {
+                Console.Clear();
                 Console.WriteLine($"Erro: {e.Message}");
             }
             catch (Exception e)
             {
+                Console.Clear();
                 Console.WriteLine($"Erro não esperado: {e.Message}");
             }
 

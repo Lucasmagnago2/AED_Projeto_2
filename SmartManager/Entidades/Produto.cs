@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text;
 
@@ -22,8 +23,7 @@ namespace SmartManager.Entidades
             AlterarMargemLucro(margemLucro);
             SetQuantidade(quantidade);
             AlterarValorCusto(valorCusto);
-
-            ValorVenda = valorCusto + (valorCusto * margemLucro/100);
+            AtualizarValorVenda();
         }
         public void SetQuantidade(int qtd)
         {
@@ -38,7 +38,7 @@ namespace SmartManager.Entidades
         }
         public void AlterarQuantidade(int qtd)
         {
-            if (Quantidade - qtd < 0)
+            if (Quantidade + qtd < 0)
             {
                 throw new ExcecaoDoSistema("A quantidade que se deseja remover é maior quantidade do produto em estoque");
             }
@@ -56,6 +56,9 @@ namespace SmartManager.Entidades
             else
             {
                 ValorCusto = valor;
+
+                //Atualizando o valor de venda
+                AtualizarValorVenda();
             }
         }
         public void AlterarMargemLucro(double valor)
@@ -67,13 +70,54 @@ namespace SmartManager.Entidades
             else
             {
                 MargemLucro = valor;
+
+                //Atualizando o valor de venda
+                AtualizarValorVenda();
             }
+        }
+        public void AtualizarValorVenda()
+        {
+            ValorVenda = ValorCusto + (ValorCusto * MargemLucro/100);
         }
         public double ValorTotalEmEstoque()
         {
             return Quantidade * ValorVenda;
         }
 
+        public static void AtualizarBaseDeProdutos(List<Produto> lista)
+        {
+            FileStream baseProdutos = new FileStream("C:\\Users\\Lucas\\desktop\\SmartManager\\SmartManager\\Arquivos\\produtos.txt", FileMode.Open, FileAccess.Write);
+            StreamWriter swProdutos = new StreamWriter(baseProdutos);
+
+            foreach (Produto p in lista)
+            {
+                string dadosProduto = $"{p.Id};{p.Nome};{p.ValorCusto};{p.MargemLucro};{p.Quantidade}";
+
+                swProdutos.WriteLine(dadosProduto);
+            }
+
+            swProdutos.Close();
+            baseProdutos.Close();
+        }
+
+        //Atualizando a lista de produtos com os dados da base de dados.
+        public static void AtualizarListaDeProdutos(List<Produto> lista)
+        {
+            string[] produtos = File.ReadAllLines("C:\\Users\\Lucas\\desktop\\SmartManager\\SmartManager\\Arquivos\\produtos.txt");
+
+            foreach (string prod in produtos)
+            {
+                string[] dadosProduto = prod.Split(";");
+
+                int id = int.Parse(dadosProduto[0]);
+                string nome = dadosProduto[1];
+                double valorCusto = double.Parse(dadosProduto[2]);
+                double margemLucro = double.Parse(dadosProduto[3]);
+                int quantidade = int.Parse(dadosProduto[4]);
+
+                lista.Add(new Produto(id, nome, valorCusto, margemLucro, quantidade));
+            }
+        }
         public override string ToString()
         {
             return $"Id: {Id}\nNome: {Nome}\nQuantidade: {Quantidade}\nValor de Custo: R${ValorCusto}\nMargem de lucro: {MargemLucro}%\nValor de venda: R${ValorVenda.ToString("F2")}";
