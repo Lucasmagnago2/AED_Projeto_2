@@ -8,14 +8,16 @@ namespace SmartManager.Entidades
     internal class Venda
     {
         public int Id { get; private set; }
+        public string ItensVendidos { get; private set; }
         public string NomeVendedor {  get; private set; }
         public DateTime Data { get; private set; }
         public double Total { get; private set; }
 
-        public Venda(string vendedor, DateTime data, double total)
+        public Venda(string itensVendidos, string vendedor, DateTime data, double total)
         {
             //função que atribui um número aleatório a propriedade Id
             SetId();
+            ItensVendidos = itensVendidos;
             NomeVendedor = vendedor;
             Data = data;
             Total = total;
@@ -40,7 +42,7 @@ namespace SmartManager.Entidades
 
             foreach (Venda v in lista)
             {
-                string dadosVenda = $"{v.Id};{v.NomeVendedor};{v.Data};{v.Total}";
+                string dadosVenda = $"{v.Id};{v.ItensVendidos};{v.NomeVendedor};{v.Data};{v.Total}";
 
                 swVendas.WriteLine(dadosVenda);
             }
@@ -59,16 +61,17 @@ namespace SmartManager.Entidades
                 string[] dadosVenda = venda.Split(";");
 
                 int id = int.Parse(dadosVenda[0]);
-                string nomeVendedor = dadosVenda[1];
-                DateTime data = DateTime.Parse(dadosVenda[2]);
-                double total = double.Parse(dadosVenda[3]);
+                string itensVendidos = dadosVenda[1];
+                string nomeVendedor = dadosVenda[2];
+                DateTime data = DateTime.Parse(dadosVenda[3]);
+                double total = double.Parse(dadosVenda[4]);
 
-                lista.Add(new Venda(nomeVendedor, data, total));
+                lista.Add(new Venda(itensVendidos, nomeVendedor, data, total));
             }
         }
         public override string ToString()
         {
-            return $"Id: {Id}\nTotal: R${Total.ToString("F2")}\nVendedor: {NomeVendedor}\nData: {Data.ToShortDateString()}";
+            return $"Id: {Id}\n{ItensVendidos}\nTotal: R${Total.ToString("F2")}\nVendedor: {NomeVendedor}\nData: {Data.ToShortDateString()}";
         }
     }
 }

@@ -35,9 +35,21 @@ namespace SmartManager.Entidades
             {
                 Console.WriteLine();
                 Console.WriteLine($"Id: {v.Id}");
+                Console.WriteLine(v.ItensVendidos);
                 Console.WriteLine($"Valor total: R$ {v.Total.ToString("F2")}");
                 Console.WriteLine($"Vendedor: {v.NomeVendedor}");
                 Console.WriteLine($"Data: {v.Data}");
+            }
+        }
+        public void ExibirListaDeProdutos()
+        {
+            foreach(Produto p in Estoque)
+            {
+                Console.WriteLine();
+                Console.WriteLine($"Id: {p.Id}");
+                Console.WriteLine($"Produto: {p.Nome}");
+                Console.WriteLine($"Quantidade: {p.Quantidade}");
+                Console.WriteLine($"Valor de venda: R$ {p.ValorVenda.ToString("F2")}");
             }
         }
 

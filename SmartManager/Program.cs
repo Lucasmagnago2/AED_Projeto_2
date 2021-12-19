@@ -389,6 +389,9 @@ namespace SmartManager
                                 Console.WriteLine("Senha alterada com sucesso");
                                 Console.WriteLine();
                                 Console.WriteLine("---Fim de alterar senha---");
+                                Console.WriteLine();
+                                Console.WriteLine("Pressione qualquer tecla para continuar...");
+                                Console.ReadLine();
                                 break;
 
                             case 0:
@@ -427,16 +430,10 @@ namespace SmartManager
                         Console.WriteLine("---Vendas---");
                         Console.WriteLine();
                         Console.WriteLine("1. Realizar venda");
+                        Console.WriteLine("2. Lista de Produtos");
                         Console.WriteLine("0. Sair");
                         Console.WriteLine();
                         Console.Write("> ");
-
-                        foreach(Venda v in administracao.Vendas)
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine(v);
-                            Console.WriteLine();
-                        }
 
                         opcao = int.Parse(Console.ReadLine());
 
@@ -447,14 +444,16 @@ namespace SmartManager
                                 Console.WriteLine("---Realizar venda---");
                                 Console.WriteLine();
                                 Console.WriteLine("Para encerrar a venda digite 0");
-                                int id = -1;
+                                
+                                int sair = -1;
                                 double total = 0;
+                                string itensVendidos = "Itens Vendidos: ";
 
-                                while(id != 0)
+                                while(sair != 0)
                                 {
                                     Console.WriteLine();
-                                    Console.Write("Id do produto: ");
-                                    id = int.Parse(Console.ReadLine());
+                                    Console.Write("Id do produto: \n");
+                                    int id = int.Parse(Console.ReadLine());
 
                                     //Verificando se o id inserido corresponde a algum produto da lista
                                     Produto p = administracao.Estoque.Find(x => x.Id == id);
@@ -467,7 +466,7 @@ namespace SmartManager
                                         if(qtd < 0)
                                         {
                                             Console.WriteLine();
-                                            Console.WriteLine("A quantidade de produtos não pode ser negativa");
+                                            Console.WriteLine("A quantidade de produtos não pode ser negativa!");
                                             Console.WriteLine();
                                         }
                                         else
@@ -475,28 +474,51 @@ namespace SmartManager
                                             vendedorAtivo.Vender(p, qtd);
 
                                             total = Venda.CalcularTotal(p, qtd, total);
+
+                                            double totalItem = qtd * p.ValorVenda;
+
+                                            itensVendidos += $"{p.Nome}: {qtd} x R$ {p.ValorVenda.ToString("F2")} = R$ {totalItem.ToString("F2")}   ";
                                         }
                                     }
                                     else
                                     {
                                         Console.WriteLine();
-                                        Console.WriteLine("Produto não encontrado");
+                                        Console.WriteLine("Produto não encontrado!");
                                         Console.WriteLine();
                                     }
+
+                                    Console.WriteLine();
+                                    Console.WriteLine("Pressione qualquer nº para continuar ou 0 para encerrar venda...");
+                                    sair = int.Parse(Console.ReadLine());
                                 }
 
                                 DateTime dataVenda = DateTime.Now;
                                 string vendedorVenda = vendedorAtivo.Nome;
 
-                                Venda vendaAtual = new Venda(vendedorVenda, dataVenda, total);
-                                administracao.Vendas.Add(vendaAtual);
+                                if (total != 0)
+                                {
+                                    Venda vendaAtual = new Venda(itensVendidos, vendedorVenda, dataVenda, total);
+                                    administracao.Vendas.Add(vendaAtual);
 
+                                    Console.Clear();
+                                    Console.WriteLine("---Venda Realizada---");
+                                    Console.WriteLine();
+                                    Console.WriteLine("Informações da venda: ");
+                                    Console.WriteLine();
+                                    Console.WriteLine(vendaAtual);
+                                    Console.WriteLine();
+                                    Console.WriteLine("---Fim da venda---");
+                                }
+                                
+                                Console.WriteLine();
+                                Console.WriteLine("Pressione qualquer tecla para continuar...");
+                                Console.ReadLine();
+                                break;
+
+                            case 2:
                                 Console.Clear();
-                                Console.WriteLine("---Venda Realizada---");
-                                Console.WriteLine();
-                                Console.WriteLine("Informações da venda: ");
-                                Console.WriteLine();
-                                Console.WriteLine(vendaAtual);
+                                Console.WriteLine("---Lista de produtos---");
+                                administracao.ExibirListaDeProdutos();
                                 Console.WriteLine();
                                 Console.WriteLine("---Fim da venda---");
                                 Console.WriteLine();

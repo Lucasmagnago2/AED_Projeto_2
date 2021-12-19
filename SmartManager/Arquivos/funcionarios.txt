@@ -1,3 +1,2 @@
-GerenteDefault;20;12345678999;12345;Administração
-VendedorDefault;20;98765432111;12345;Vendas
-Lucas;20;16721298775;123456;Administração
+GerenteDefault;20;12345678912;abc123;Administração
+Lucas Magnago de Oliveira;20;16721298775;12345;Vendas

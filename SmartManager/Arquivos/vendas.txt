@@ -1,1 +1,1 @@
-76815;VendedorDefault;19/12/2021 01:23:26;69,87
+49630;Itens Vendidos: Café: 7 x R$ 4,25 = R$ 29,73   Leite: 6 x R$ 2,93 = R$ 17,56   ;Lucas Magnago de Oliveira;19/12/2021 14:30:27;47,288892000000004
